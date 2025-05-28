@@ -9,7 +9,7 @@
 	<authorUrl>www.joomla.org</authorUrl>
 	<version>5.0.0</version>
 	<description>MOD_ADMINCHAT_XML_DESCRIPTION</description>
-	<namespace path="src">Joomla\Module\Adminchat</namespace>
+	<namespace path="src">CodeAlongJug\Module\Adminchat</namespace>
 	<files>
 		<folder module="mod_adminchat">services</folder>
 		<folder>src</folder>
