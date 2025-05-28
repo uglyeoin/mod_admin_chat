@@ -32,7 +32,7 @@ return new class () implements ServiceProviderInterface {
      */
     public function register(Container $container)
     {
-        $container->registerServiceProvider(new ModuleDispatcherFactory('\\Joomla\\Module\\Adminchat'));
+        $container->registerServiceProvider(new ModuleDispatcherFactory('\\CodeAlongJug\\Module\\Adminchat'));
 
         $container->registerServiceProvider(new Module());
     }
