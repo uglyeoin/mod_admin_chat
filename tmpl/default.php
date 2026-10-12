@@ -1,37 +1,70 @@
 <?php
 
 /**
- * @package     Joomla.Administrator
- * @subpackage  admin_chat
+ * @package     KindOfUseful.Module.AdminChat
  *
- * @copyright   (C) 2010 Open Source Matters, Inc. <https://www.joomla.org>
+ * @copyright   (C) 2025-2026 Kind of Useful. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-defined('_JEXEC') or die;
-?>
-<?php if($chat_type === 'tawkto'){ ?>
-    <p style="padding-left:20px">The Tawk.to chat is now available and can be found in the bottom right of the window.</p>
+\defined('_JEXEC') or die;
 
-    <!--Start of Tawk.to Script-->
-    <script type="text/javascript">
-        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-        (function(){
-            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-            s1.async=true;
-            s1.src='https://embed.tawk.to/<?php echo $widget_id;?>';
-            s1.charset='UTF-8';
-            s1.setAttribute('crossorigin','*');
-            s0.parentNode.insertBefore(s1,s0);
-        })();
-    </script>
-    <!--End of Tawk.to Script-->
-<?php } elseif($chat_type === 'crisp') { ?>
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
-<?php } elseif($chat_type === 'messenger'){ ?>
+/** @var string     $chat_type */
+/** @var array|null $chat */
+/** @var bool       $show_notice */
 
-<?php } elseif($chat_type === 'whatsapp'){ ?>
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 
-<?php } ?>
+if ($chat === null) {
+    // Tell the administrator what is missing rather than failing silently.
+    $key = $chat_type === 'messenger' ? 'MOD_ADMINCHAT_MESSENGER_RETIRED' : 'MOD_ADMINCHAT_NOT_CONFIGURED';
+    echo '<p class="alert alert-warning m-2">' . Text::_($key) . '</p>';
 
+    return;
+}
 
+$json = static fn ($value): string => json_encode($value, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES);
+
+switch ($chat_type) {
+    case 'tawkto':
+        $wa->addInlineScript(
+            'var Tawk_API=Tawk_API||{},Tawk_LoadStart=new Date();(function(){var s=document.createElement("script");'
+            . 's.async=true;s.src=' . $json($chat['src']) . ';s.charset="UTF-8";s.setAttribute("crossorigin","*");'
+            . 'document.head.appendChild(s);})();',
+            [],
+            ['type' => 'text/javascript'],
+            []
+        );
+        break;
+
+    case 'crisp':
+        $wa->addInlineScript(
+            'window.$crisp=[];window.CRISP_WEBSITE_ID=' . $json($chat['id']) . ';(function(){var s=document.createElement("script");'
+            . 's.src="https://client.crisp.chat/l.js";s.async=1;document.head.appendChild(s);})();',
+            [],
+            ['type' => 'text/javascript'],
+            []
+        );
+        break;
+
+    case 'whatsapp':
+        $wa->addInlineStyle(
+            '.kou-adminchat-wa{position:fixed;right:20px;bottom:20px;z-index:1050;display:inline-flex;align-items:center;gap:.5rem;'
+            . 'padding:.65rem 1rem;border-radius:999px;background:#25D366;color:#fff;font-weight:600;text-decoration:none;'
+            . 'box-shadow:0 4px 14px rgba(0,0,0,.2)}.kou-adminchat-wa:hover,.kou-adminchat-wa:focus{background:#1ebe5b;color:#fff}'
+        );
+        ?>
+		<a class="kou-adminchat-wa" href="<?php echo htmlspecialchars($chat['url'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer">
+			<span class="fa-brands fa-whatsapp" aria-hidden="true"></span>
+			<?php echo Text::_('MOD_ADMINCHAT_WHATSAPP_BUTTON'); ?>
+		</a>
+        <?php
+        break;
+}
+
+if ($show_notice && $chat_type !== 'whatsapp') : ?>
+	<p class="m-2"><?php echo Text::_('MOD_ADMINCHAT_NOTICE'); ?></p>
+<?php endif;

@@ -1,47 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension type="module" client="administrator" method="upgrade">
 	<name>mod_adminchat</name>
-	<author>Joomla! Project</author>
-	<creationDate>2005-11</creationDate>
-	<copyright>(C) 2005 Open Source Matters, Inc.</copyright>
+	<author>Kind of Useful</author>
+	<creationDate>2026-10</creationDate>
+	<copyright>(C) 2025-2026 Kind of Useful. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-	<authorEmail>admin@joomla.org</authorEmail>
-	<authorUrl>www.joomla.org</authorUrl>
-	<version>5.0.0</version>
+	<authorEmail>eoin@squareballoon.co.uk</authorEmail>
+	<authorUrl>https://kindofuseful.com</authorUrl>
+	<version>5.1.0</version>
 	<description>MOD_ADMINCHAT_XML_DESCRIPTION</description>
-	<namespace path="src">CodeAlongJug\Module\Adminchat</namespace>
+	<namespace path="src">KindOfUseful\Module\AdminChat</namespace>
+	<scriptfile>script.php</scriptfile>
+
 	<files>
 		<folder module="mod_adminchat">services</folder>
 		<folder>src</folder>
 		<folder>tmpl</folder>
+		<folder>language</folder>
 	</files>
+
 	<languages>
 		<language tag="en-GB">language/en-GB/mod_adminchat.ini</language>
 		<language tag="en-GB">language/en-GB/mod_adminchat.sys.ini</language>
 	</languages>
+
+	<updateservers>
+		<server type="extension" priority="1" name="KOU Admin Chat">https://kindofuseful.com/index.php?option=com_ars&amp;view=update&amp;task=stream&amp;format=xml&amp;id=1</server>
+	</updateservers>
+
 	<config>
 		<fields name="params">
 			<fieldset name="basic">
-                <field
-                    class="form-select"
-                    name="chat_type"
-                    label="Chat Type"
-                    type="list"
-                >
-                    <option value="tawkto">Tawk.to</option>
-                    <option value="crisp">Crisp</option>
-                    <option value="messenger">Messenger</option>
-                    <option value="whatsapp">WhatsApp</option>
-
-                </field>
-                <field
-                    name="widget_id"
-                    type="text"
-                    label="Tawk.to Widget Code"
-                    description="Paste your Tawk.to widget embed id here"
-                    showon="tawkto"
-                />
-            </fieldset>
+				<field
+					name="chat_type"
+					type="list"
+					label="MOD_ADMINCHAT_FIELD_CHAT_TYPE_LABEL"
+					description="MOD_ADMINCHAT_FIELD_CHAT_TYPE_DESC"
+					default="tawkto"
+					class="form-select"
+					>
+					<option value="tawkto">MOD_ADMINCHAT_CHAT_TYPE_TAWKTO</option>
+					<option value="crisp">MOD_ADMINCHAT_CHAT_TYPE_CRISP</option>
+					<option value="whatsapp">MOD_ADMINCHAT_CHAT_TYPE_WHATSAPP</option>
+				</field>
+				<field
+					name="widget_id"
+					type="text"
+					label="MOD_ADMINCHAT_FIELD_TAWKTO_LABEL"
+					description="MOD_ADMINCHAT_FIELD_TAWKTO_DESC"
+					hint="64a1b2c3d4e5f6a7b8c9d0e1/1h2j3k4l5"
+					filter="string"
+					showon="chat_type:tawkto"
+				/>
+				<field
+					name="crisp_id"
+					type="text"
+					label="MOD_ADMINCHAT_FIELD_CRISP_LABEL"
+					description="MOD_ADMINCHAT_FIELD_CRISP_DESC"
+					hint="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+					filter="string"
+					showon="chat_type:crisp"
+				/>
+				<field
+					name="whatsapp_number"
+					type="tel"
+					label="MOD_ADMINCHAT_FIELD_WHATSAPP_NUMBER_LABEL"
+					description="MOD_ADMINCHAT_FIELD_WHATSAPP_NUMBER_DESC"
+					hint="+44 7700 900123"
+					filter="string"
+					showon="chat_type:whatsapp"
+				/>
+				<field
+					name="whatsapp_message"
+					type="text"
+					label="MOD_ADMINCHAT_FIELD_WHATSAPP_MESSAGE_LABEL"
+					description="MOD_ADMINCHAT_FIELD_WHATSAPP_MESSAGE_DESC"
+					filter="string"
+					showon="chat_type:whatsapp"
+				/>
+				<field
+					name="show_notice"
+					type="radio"
+					label="MOD_ADMINCHAT_FIELD_SHOW_NOTICE_LABEL"
+					description="MOD_ADMINCHAT_FIELD_SHOW_NOTICE_DESC"
+					layout="joomla.form.field.radio.switcher"
+					default="1"
+					filter="integer"
+					>
+					<option value="0">JHIDE</option>
+					<option value="1">JSHOW</option>
+				</field>
+			</fieldset>
 			<fieldset name="advanced">
 				<field
 					name="layout"
@@ -50,7 +99,6 @@
 					class="form-select"
 					validate="moduleLayout"
 				/>
-
 				<field
 					name="moduleclass_sfx"
 					type="textarea"
